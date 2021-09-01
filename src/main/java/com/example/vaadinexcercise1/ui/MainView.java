@@ -1,19 +1,15 @@
 package com.example.vaadinexcercise1.ui;
 
-import com.vaadin.flow.component.ComponentEvent;
+import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.orderedlayout.FlexLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.router.Route;
 
 import java.util.ArrayList;
@@ -57,6 +53,7 @@ public class MainView extends VerticalLayout {
         dialog.add(content2);
 
         grid.setHeight("250px");
+        grid.addComponentColumn(this::function);
 
         FlexLayout flexLayout = new FlexLayout();
 
@@ -69,11 +66,17 @@ public class MainView extends VerticalLayout {
         closeEditor();
     }
 
-    private void addClient() {
+    private Button function(Client item) {
+        Icon vaadinIcon = VaadinIcon.EDIT.create();
+        vaadinIcon.setColor("orange");
+        Button btn = new Button("", vaadinIcon);
+        btn.addClickListener( e -> editContact(item));
+        return btn;
+    }
 
+    private void addClient() {
         grid.asSingleSelect().clear();
         editContact(new Client());
-
     }
 
     private void deleteClient(Form.DeleteEvent evt) {
@@ -85,8 +88,6 @@ public class MainView extends VerticalLayout {
     }
 
     private void saveClient(Form.SaveEvent evt) {
-        //Optional<Client> first = clientList.stream().filter(x -> x.getId() == evt.getClient().getId())
-        //        .findFirst();
         boolean a = clientList.stream().allMatch(p -> p.getEmail()!=evt.getClient().getEmail());
         if(a) clientList.add(evt.getClient());
         updateList();
@@ -99,7 +100,7 @@ public class MainView extends VerticalLayout {
 
     private void configureGrid() {
         grid.setSizeFull();
-        grid.asSingleSelect().addValueChangeListener(evt -> editContact(evt.getValue()));
+        //grid.asSingleSelect().addValueChangeListener(evt -> editContact(evt.getValue()));
     }
 
     private void editContact(Client value) {

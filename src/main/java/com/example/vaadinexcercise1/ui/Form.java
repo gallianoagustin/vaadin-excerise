@@ -1,24 +1,17 @@
 package com.example.vaadinexcercise1.ui;
 
-import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentEvent;
-import com.vaadin.flow.component.ComponentEventListener;
-import com.vaadin.flow.component.Key;
+import com.vaadin.flow.component.*;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
-import org.checkerframework.checker.units.qual.C;
 
-import java.util.ArrayList;
-import java.util.List;
 
-public class Form extends VerticalLayout{
+public class Form extends FlexLayout {
+
+    Text title = new Text("Edit item");
 
     TextField name = new TextField("Name");
     TextField surname = new TextField("Surname");
@@ -32,22 +25,22 @@ public class Form extends VerticalLayout{
     Binder<Client> binder = new Binder<>(Client.class);
 
     public Form () {
-
-        setHeight("400px");
-        setWidth("200px");
+        setWidth("500px");
+        setFlexDirection(FlexDirection.COLUMN);
 
         binder.bindInstanceFields(this);
 
         add (
+                title,
                 createFieldsLayouts(),
                 createButtonsLayout()
         );
     }
 
     private Component createFieldsLayouts() {
-        VerticalLayout verticalLayout = new VerticalLayout(name,surname,email,phone);
-        verticalLayout.setSizeFull();
-        return verticalLayout;
+        FlexLayout flexLayout1 = new FlexLayout(name,surname,email,phone);
+        flexLayout1.setFlexDirection(FlexDirection.COLUMN);
+        return flexLayout1;
     }
 
     public void setClient(Client client) {
@@ -60,6 +53,12 @@ public class Form extends VerticalLayout{
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
+        FlexLayout flexLayout3 =new FlexLayout();
+
+        close.getStyle().set("margin-left","auto");
+
+        flexLayout3.add(delete,close,save);
+
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
 
@@ -67,7 +66,7 @@ public class Form extends VerticalLayout{
         delete.addClickListener( click -> fireEvent(new DeleteEvent(this, binder.getBean())));
         close.addClickListener(click -> fireEvent( new CloseEvent(this)));
 
-        return new HorizontalLayout(delete,close,save);
+        return flexLayout3;
     }
 
     private void save () {
