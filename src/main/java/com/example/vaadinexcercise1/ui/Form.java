@@ -8,6 +8,7 @@ import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -17,7 +18,7 @@ import org.checkerframework.checker.units.qual.C;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Form extends FormLayout{
+public class Form extends VerticalLayout{
 
     TextField name = new TextField("Name");
     TextField surname = new TextField("Surname");
@@ -25,22 +26,28 @@ public class Form extends FormLayout{
     TextField phone = new TextField("Phone");
 
     Button save = new Button("Save");
-    Button delete = new Button("Delete");
+    Button delete = new Button("Delete...");
     Button close = new Button ("Close");
 
     Binder<Client> binder = new Binder<>(Client.class);
 
     public Form () {
 
+        setHeight("400px");
+        setWidth("200px");
+
         binder.bindInstanceFields(this);
 
         add (
-                name,
-                surname,
-                email,
-                phone,
+                createFieldsLayouts(),
                 createButtonsLayout()
         );
+    }
+
+    private Component createFieldsLayouts() {
+        VerticalLayout verticalLayout = new VerticalLayout(name,surname,email,phone);
+        verticalLayout.setSizeFull();
+        return verticalLayout;
     }
 
     public void setClient(Client client) {
@@ -54,13 +61,13 @@ public class Form extends FormLayout{
         close.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
         save.addClickShortcut(Key.ENTER);
-        delete.addClickShortcut(Key.ESCAPE);
+        close.addClickShortcut(Key.ESCAPE);
 
         save.addClickListener( click -> save());
         delete.addClickListener( click -> fireEvent(new DeleteEvent(this, binder.getBean())));
         close.addClickListener(click -> fireEvent( new CloseEvent(this)));
 
-        return new HorizontalLayout(save,delete,close);
+        return new HorizontalLayout(delete,close,save);
     }
 
     private void save () {

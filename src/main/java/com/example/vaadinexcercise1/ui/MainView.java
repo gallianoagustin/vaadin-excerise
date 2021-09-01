@@ -2,10 +2,14 @@ package com.example.vaadinexcercise1.ui;
 
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
+import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.orderedlayout.FlexLayout;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
@@ -19,20 +23,20 @@ import java.util.Optional;
 @Route
 public class MainView extends VerticalLayout {
 
-    private Form form = new Form();
+    private final Form form;
     Grid<Client> grid = new Grid<>(Client.class);
     List<Client> clientList = new ArrayList<>();
     Button btn;
-
+    Dialog dialog;
     public MainView () {
 
         setSizeFull();
         configureGrid();
 
-        clientList.add(new Client(1,"Lucas", "Kane", "lkane@gmail.com", "1123123123"));
-        clientList.add(new Client(2,"Peter", "Buchanan", "pbuchanan@gmail.com", "267182912"));
-        clientList.add(new Client(3,"Samuel", "Lee", "slee@gmail.com", "6524382912"));
-        clientList.add(new Client(4,"Aaron", "Akiston", "aakiston@gmail.com", "6512891222"));
+        clientList.add(new Client("Lucas", "Kane", "lkane@gmail.com", "1123123123"));
+        clientList.add(new Client("Peter", "Buchanan", "pbuchanan@gmail.com", "267182912"));
+        clientList.add(new Client("Samuel", "Lee", "slee@gmail.com", "6524382912"));
+        clientList.add(new Client("Aaron", "Akiston", "aakiston@gmail.com", "6512891222"));
 
         updateList();
 
@@ -45,23 +49,35 @@ public class MainView extends VerticalLayout {
 
         btn = new Button("New Item");
         btn.addClickListener( click -> addClient());
+        btn.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
 
-        Div content = new Div(grid,form, btn);
+        Div content2 = new Div(form);
+
+        dialog = new Dialog();
+        dialog.add(content2);
+
+        grid.setHeight("250px");
+
+        FlexLayout flexLayout = new FlexLayout();
+
+        flexLayout.add(btn);
+        flexLayout.setFlexDirection(FlexLayout.FlexDirection.ROW_REVERSE);
+        Div content = new Div(grid, flexLayout);
         content.setSizeFull();
-
-
 
         add(content);
         closeEditor();
     }
 
     private void addClient() {
+
         grid.asSingleSelect().clear();
         editContact(new Client());
+
     }
 
     private void deleteClient(Form.DeleteEvent evt) {
-        Optional<Client> first = clientList.stream().filter(x -> x.getId() == evt.getClient().getId())
+        Optional<Client> first = clientList.stream().filter(x -> x.getEmail().equals(evt.getClient().getEmail()))
                 .findFirst();
         clientList.remove(first.get());
         updateList();
@@ -69,11 +85,10 @@ public class MainView extends VerticalLayout {
     }
 
     private void saveClient(Form.SaveEvent evt) {
-        /*
-        Optional<Client> first = clientList.stream().filter(x -> x.getId() == evt.getClient().getId())
-                .findFirst();
-        clientList.add(evt.getClient());
-         */
+        //Optional<Client> first = clientList.stream().filter(x -> x.getId() == evt.getClient().getId())
+        //        .findFirst();
+        boolean a = clientList.stream().allMatch(p -> p.getEmail()!=evt.getClient().getEmail());
+        if(a) clientList.add(evt.getClient());
         updateList();
         closeEditor();
     }
@@ -90,24 +105,12 @@ public class MainView extends VerticalLayout {
     private void editContact(Client value) {
         form.setClient(value);
         form.setVisible(true);
+        dialog.open();
     }
 
     public void closeEditor () {
         form.setClient(null);
         form.setVisible(false);
+        dialog.close();
     }
-
-    /*
-    public Button function(Client item, List<Client> clientList) {
-
-        Client client;
-        form.setClient(item,clientList);
-        Button btn = new Button("", VaadinIcon.TABLE.create());
-        btn.addClickListener(buttonClickEvent -> add(form));
-
-
-    }
-
-
-     */
 }
