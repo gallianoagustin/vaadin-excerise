@@ -1,6 +1,5 @@
 package com.example.vaadinexcercise1.ui;
 
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -52,7 +51,6 @@ public class MainView extends VerticalLayout {
         dialog = new Dialog();
         dialog.add(content2);
 
-        grid.setHeight("250px");
         grid.addComponentColumn(this::function);
 
         FlexLayout flexLayout = new FlexLayout();
@@ -99,7 +97,8 @@ public class MainView extends VerticalLayout {
     }
 
     private void configureGrid() {
-        grid.setSizeFull();
+        grid.setWidthFull();
+        grid.setHeight("250px");
         //grid.asSingleSelect().addValueChangeListener(evt -> editContact(evt.getValue()));
     }
 
@@ -107,6 +106,7 @@ public class MainView extends VerticalLayout {
         form.setClient(value);
         form.setVisible(true);
         dialog.open();
+        dialog.setCloseOnOutsideClick(false);
     }
 
     public void closeEditor () {

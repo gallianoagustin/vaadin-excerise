@@ -37,7 +37,7 @@ public class Form extends FlexLayout {
         );
     }
 
-    private Component createFieldsLayouts() {
+    private FlexLayout createFieldsLayouts() {
         FlexLayout flexLayout1 = new FlexLayout(name,surname,email,phone);
         flexLayout1.setFlexDirection(FlexDirection.COLUMN);
         return flexLayout1;
@@ -115,6 +115,7 @@ public class Form extends FlexLayout {
     public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
                                                                   ComponentEventListener<T> listener) {
         return getEventBus().addListener(eventType, listener);
+
     }
 
 }
